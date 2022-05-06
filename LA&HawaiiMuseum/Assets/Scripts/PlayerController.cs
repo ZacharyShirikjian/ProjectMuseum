@@ -88,18 +88,18 @@ public class PlayerController : MonoBehaviour
         if(gm.curInteractable.tag == "Image")
         {
             //Switch to the Image or UI action map
+            gm.OpenImage();
             OnDisable();
-            menuActionMap.Enable();
         }
     }
 
-    private void OnEnable()
+    public void OnEnable()
     {
         move.action.Enable();
         interact.action.Enable();
     }
 
-    private void OnDisable()
+    public void OnDisable()
     {
         move.action.Disable();
         interact.action.Disable();

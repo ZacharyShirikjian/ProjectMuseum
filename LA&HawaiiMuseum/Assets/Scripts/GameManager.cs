@@ -7,9 +7,6 @@ using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
-    //ACTION MAPS//
-    public InputActionMap menuActionMap;
-    public InputActionMap playerActionMap;
 
     //INPUT ACTION REFRENCES//
 
@@ -29,6 +26,10 @@ public class GameManager : MonoBehaviour
     //REFERENCES//
     [SerializeField] private GameObject interactPrompt;
      private TextMeshProUGUI interactPromptText;
+    [SerializeField] private PlayerController player;
+    [SerializeField] private GameObject DialogueBox;
+    private TextMeshProUGUI dialogueText;
+    [SerializeField] private TextMeshProUGUI curSouvenirs;
 
     public GameObject curInteractable;
     public GameObject imageDisplay; 
@@ -41,6 +42,11 @@ public class GameManager : MonoBehaviour
         totalSouvenirs = 20;
         interactPromptText = interactPrompt.GetComponent<TextMeshProUGUI>();
         interactPrompt.SetActive(false);
+        imageDisplay.SetActive(false);
+        dialogueText = DialogueBox.GetComponentInChildren<TextMeshProUGUI>();
+        dialogueText.text = "";
+        curSouvenirs.text = numSouvenirs.ToString();
+        DialogueBox.SetActive(false);
         curInteractable = null;
     }
 
@@ -61,7 +67,24 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        curSouvenirs.text = numSouvenirs.ToString();
+        //If player's looking at image and presses Space
+        //Close the Image
+        if (menuClose.action.triggered && imageDisplay.activeSelf == true)
+        {
+            CloseImage();
+        }
+
+        if (numSouvenirs >= totalSouvenirs)
+        {
+            canExit = true;
+        }
+
+        else if(numSouvenirs < totalSouvenirs)
+        {
+            canExit = false;
+        }
+
     }
 
     public void PauseGame()
@@ -71,32 +94,46 @@ public class GameManager : MonoBehaviour
 
     public void OpenImage()
     {
-        if(imageOpen == false)
-        {
-            OnEnable();
-            imageDisplay.SetActive(true);
-            imageDisplay.GetComponent<Image>().sprite = imageDisplay.GetComponent<ImageScript>().imageSprite;
-        }
-
-        else if (imageOpen == true)
-        {
-            OnDisable();
-            imageDisplay.SetActive(true);
-            imageDisplay.GetComponent<Image>().sprite = imageDisplay.GetComponent<ImageScript>().imageSprite;
-        }
+        Debug.Log("opening image");
+        OnEnable();
+        imageDisplay.SetActive(true);
+        imageOpen = true;
+        imageDisplay.GetComponent<Image>().sprite = curInteractable.GetComponent<ImageScript>().imageSprite;
+        DialogueBox.SetActive(true);
+        dialogueText.text = curInteractable.GetComponent<ImageScript>().imageDescription.ToString();
+        player.canInteract = false;
+        player.canMove = false;
        
+    }
+
+    //Disable menu, renable player control
+    public void CloseImage()
+    {
+        Debug.Log("closing image");
+        imageDisplay.SetActive(false);
+        imageOpen = false;
+        DialogueBox.SetActive(false);
+        dialogueText.text = "";
+        OnDisable();
+        player.OnEnable();
+        player.canInteract = true;
+        player.canMove = true;
+        numSouvenirs++;
+
     }
 
     private void OnEnable()
     {
-        menuActionMap.Enable();
-        playerActionMap.Disable();
+        menuClose.action.Enable();
+        menuSubmit.action.Enable();
+        imageZoomIn.action.Enable();
     }
 
     private void OnDisable()
     {
-        playerActionMap.Enable();
-        menuActionMap.Disable();
+        menuClose.action.Disable();
+        menuSubmit.action.Disable();
+        imageZoomIn.action.Disable();
     }
 
 }
