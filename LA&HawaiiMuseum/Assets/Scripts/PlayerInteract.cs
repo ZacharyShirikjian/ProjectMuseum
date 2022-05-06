@@ -22,15 +22,23 @@ public class PlayerInteract : MonoBehaviour
         if(other.gameObject.tag == "Image")
         {
             player.canInteract = true;
-            gm.UpdateInteractUI("Image");
+            gm.curInteractable = other.gameObject;
+            gm.UpdateInteractUI("Read");
+        }
+        else if (other.gameObject.tag == "Jeffu")
+        {
+            player.canInteract = true;
+            gm.curInteractable = other.gameObject;
+            gm.UpdateInteractUI("Talk");
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.tag == "Interactable")
+        if (other.gameObject.tag == "Image" || other.gameObject.tag == "Jeffu")
         {
             player.canInteract = true;
+            gm.curInteractable = null;
             gm.UpdateInteractUI("");
         }
     }
