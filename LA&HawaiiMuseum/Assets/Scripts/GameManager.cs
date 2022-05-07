@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour
         imageDisplay.SetActive(false);
         dialogueText = DialogueBox.GetComponentInChildren<TextMeshProUGUI>();
         dialogueText.text = "";
-        curSouvenirs.text = numSouvenirs.ToString();
+        curSouvenirs.SetText(numSouvenirs.ToString() + "/" + totalSouvenirs.ToString());
         DialogueBox.SetActive(false);
         curInteractable = null;
     }
@@ -67,7 +67,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        curSouvenirs.text = numSouvenirs.ToString();
+        curSouvenirs.SetText(numSouvenirs.ToString() + "/" + totalSouvenirs.ToString());
         //If player's looking at image and presses Space
         //Close the Image
         if (menuClose.action.triggered && imageDisplay.activeSelf == true)
@@ -110,6 +110,11 @@ public class GameManager : MonoBehaviour
     public void CloseImage()
     {
         Debug.Log("closing image");
+        if (curInteractable.GetComponent<ImageScript>().alreadyInteracted == false)
+        {
+            numSouvenirs++;
+            curInteractable.GetComponent<ImageScript>().alreadyInteracted = true;
+        }
         imageDisplay.SetActive(false);
         imageOpen = false;
         DialogueBox.SetActive(false);
@@ -118,7 +123,7 @@ public class GameManager : MonoBehaviour
         player.OnEnable();
         player.canInteract = true;
         player.canMove = true;
-        numSouvenirs++;
+
 
     }
 
